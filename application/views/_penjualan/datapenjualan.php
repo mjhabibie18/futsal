@@ -46,56 +46,60 @@
                     <div class="form-group">
                         <label class="control-label col-xs-3" >Waktu Transaksi</label>
                         <div class="col-xs-8">
-                            <input name="waktu_transaksi" class="form-control" type="datetime-local"  required>
+                            <input id="waktu_transaksi" name="waktu_transaksi" class="form-control" type="datetime-local" required>
                         </div>
                     </div>
  
                     <div class="form-group">
                         <label class="control-label col-xs-3" >Waktu Booking</label>
                         <div class="col-xs-8">
-                            <input name="nama_barang" class="form-control" type="datetime-local"  required>
+                            <input id="waktu_booking" name="nama_barang" class="form-control" type="datetime-local" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-xs-3" >Nomor Lapangan</label>
                         <div class="col-xs-8">
-                            <input name="harga" class="form-control" type="number" placeholder="Nomor Lapangan..." required>
+                             <select id="lapangan" type="text" name="status_pembelian" class="form-control">
+                                <option>Lapangan A</option>
+                                <option>Lapangan B</option>
+                                <option>Lapangan C</option>
+                    </select>
                         </div>
                     </div>
 
                      <div class="form-group">
                         <label class="control-label col-xs-3" >Lama Sewa</label>
                         <div class="col-xs-8">
-                            <input name="harga" class="form-control" type="number" placeholder="Lama Sewa..." required>
+                            <input id="lamaSewa" name="lm_sewa" class="form-control" type="number" placeholder="Lama Sewa..." onchange="getJmlHarga()"required>
                         </div>
                     </div>
 
                      <div class="form-group">
                         <label class="control-label col-xs-3" >Harga Perjam</label>
                         <div class="col-xs-8">
-                            <input name="harga" class="form-control" type="text" readonly="readonly" value="120000" required>
+                            <input id="hrg" name="harga" class="form-control" type="text" readonly="readonly" value="120000" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-xs-3" >Jumlah Harga</label>
                         <div class="col-xs-8">
-                            <input name="harga" class="form-control" type="text" placeholder="Harga..." required>
+                            <input id="jmlHrg" name="lm_sewa" class="form-control" type="text" placeholder="Harga..." required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-xs-3" >ID Customer</label>
                         <div class="col-xs-8">
-                            <input name="nama" class="form-control" type="text" placeholder="Nama Customer..." required>
+                            <input id="idCustomer" name="id_customer" class="form-control" type="text" placeholder="Nama Customer..." onkeyup="getNama()"required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-xs-3" >Nama Customer</label>
                         <div class="col-xs-8">
-                            <input name="nama" class="form-control" type="text" placeholder="Nama Customer..." required>
+                            <input id="namaCustomer" name="nama" class="form-control" type="text" placeholder="Nama Customer..." required>
                         </div>
                     </div>
                     
@@ -103,7 +107,7 @@
  
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Tutup</button>
-                    <button class="btn btn-info">Simpan</button>
+                    <button class="btn btn-info" onclick="simpanData()">Simpan</button>
                 </div>
             </form>
             </div>
@@ -118,17 +122,73 @@
 </script>
 <script type="text/javascript">
  $(document).ready(function(){
-  console.log('masuk');
-    $('kodeBooking').val('coba');
- }  
+});
 
-      function isi_barang() {
-          $.ajax({
-            url: "http://localhost/waroengbola/index.php/datapenjualan/get_detail_trx",
+
+function getCodes(){
+  $.ajax({
+          url: "http://localhost/futsal/index.php/datapenjualan/get_detail_trx",
+          type:"get",
+          async : false,
+          dataType : 'json',
             success: function (data) {
               console.log('masuk');
               $('#kodeBooking').val(data.kode);
-          });
-        }
+              console.log(data.kode);
+              }
+            }
+          )};
+
+ $("#modal_add_new").on('shown.bs.modal', function () {
+        getCodes();
+   });
+
+ function getJmlHarga(){
+    var lamaSewa = $('#lamaSewa').val();
+    var harga = $('#hrg').val();
+    var getJmlHarga = lamaSewa * harga;
+    $('#jmlHrg').val(getJmlHarga);
+
+ }
+
+ function getNama(){
+    var id = $('#idCustomer').val();
+     $.ajax({
+        type  : 'ajax',
+          url: "http://localhost/futsal/index.php/datapenjualan/getNamaCustomer",
+          type:"get",
+          data: "ID="+id,
+          dataType : 'json',
+            success: function (data) {
+              console.log(data);
+              $('#namaCustomer').val(data[0].username);
+
+              }
+            }
+          )};
+
+    function simpanData(){
+        var kode_booking = $('#kodeBooking').val();
+        var wkt_transaksi = $('#waktu_transaksi').val();
+        var wkt_booking = $('#waktu_booking').val();
+        var no_lapangan = $('#lapangan').val();
+        var lm_sewa = $('#lamaSewa').val();
+        var hrg = $('#hrg').val();
+        var jml_harga = $('#jmlHrg').val();
+        var id_customer = $('#idCustomer').val();
+        var namaCustomer = $('#namaCustomer').val();
+        $.ajax({
+           url: "http://localhost/futsal/index.php/datapenjualan/simpanData",
+           type: 'POST',
+           dataType: "JSON",
+           data: {kode_booking: kode_booking,lm_sewa:lm_sewa,jml_harga:jml_harga,id_customer:id_customer,no_lapangan:no_lapangan,
+            wkt_transaksi:wkt_transaksi,wkt_booking:wkt_booking},
+           success: function (data) {
+              console.log(data);
+              alert('masuk cuy');
+              }
+            }
+          )};
+
 </script>
 </section>

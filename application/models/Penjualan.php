@@ -18,6 +18,11 @@ class Penjualan extends CI_Model
         return $this->db->get($this->_table)->result();
     }
 
+    public function getNama($ID){
+     $hasil=$this->db->query(" SELECT * FROM user where ID = $ID");
+    return $hasil->result();
+    }
+
     public function duatable() 
     {
         $this->db->select('*');
@@ -33,6 +38,20 @@ class Penjualan extends CI_Model
         $this->db->from('tb_transaksi');
         $query = $this->db->get();
         return $query->result();
+    }
+
+    public function save_product(){
+      $data = array(
+            'kode_booking' => $this->input->post('kode_booking'),
+            'lm_sewa' => $this->input->post('lm_sewa'),
+            'jml_harga' => $this->input->post('jml_harga'),
+            'id_customer' => $this->input->post('id_customer'),
+            'no_lapangan' => $this->input->post('no_lapangan'),
+            'wkt_transaksi' => $this->input->post('wkt_transaksi'),
+            'wkt_booking' => $this->input->post('wkt_booking'),
+        );
+      $result = $this->db->insert('transaksi', $data);
+      return $result();
     }
 
     public function kode()

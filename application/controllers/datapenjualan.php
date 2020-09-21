@@ -24,12 +24,24 @@ public function __construct()
         echo json_encode($data);
     }
 
+    public function getNamaCustomer(){
+    	$ID = $this->input->get('ID');
+        $data=$this->Penjualan->getNama($ID);
+        echo json_encode($data);
+    }
+
 	public function get_detail()
 	{
 		$kode_trx=$this->input->get('kode_trx');
         $data=$this->Penjualan->get_data_detail($kode_trx);
         echo json_encode($data);
 	}
+
+	public function simpanData()
+   {
+   	 	$data=$this->Penjualan->save_product();
+        echo json_encode($data);
+      }
 
 	public function edit($id)
     {
